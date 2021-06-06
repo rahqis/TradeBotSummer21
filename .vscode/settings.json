@@ -1,0 +1,6 @@
+{
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.extraPaths": [
+        "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages"
+    ]
+}
