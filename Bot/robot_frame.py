@@ -3,34 +3,37 @@
 import pandas as pd
 
 from td.client import TDClient
-from td.utils import milliseconds_since_epochs as millse
+from td.utils import TDUtilities
 
 from datetime import datetime as dt, timezone
 from datetime import time
 from datetime import timezone as tz
 
 from typing import List, Dict, Union
+from Bot.portfolio import Portfolio
 
 
 class robotFrame():
 
-    def __init__(self, client_id: str, redirect_url: str, creds: str = None, acct: str = None) -> None:
+    def __init__(self, client_id: str, redirect_uri: str, creds: str = None, acct: str = None, paper_trading: bool = True) -> None:
 
         self.acct: str = acct
         self.client_id: str = client_id
-        self.redirect_url: str = redirect_url
+        self.redirect_uri: str = redirect_uri
         self.creds: str = creds
-        self.new_session: TDClient = self.__new_session()
+        self.session: TDClient = self.__new_session()
         self.trades: dict = {}
         self.hist_prices: dict = {}
         self.stock_frame = None
+        self.paper_trading = paper_trading
+        self.portfolio: Portfolio = None
 
     def __new_session(self) -> TDClient:
 
         td_client = TDClient(
             client_id=self.client_id,
-            redirect_url=self.redirect_url,
-            creds=self.creds
+            redirect_uri=self.redirect_uri,
+            credentials_path=self.creds
         )
 
         td_client.login()
@@ -80,7 +83,8 @@ class robotFrame():
             return False
 
     def new_portfolio(self):
-        pass
+        self.portfolio.td_client = Portfolio(acct_num=self.acct)
+        self.portfolio._td_client = self.session
 
     def new_trade(self):
         pass
@@ -89,7 +93,11 @@ class robotFrame():
         pass
 
     def updated_quote(self) -> dict:
-        pass
+        tickers = self.portfolio.positions.keys()
+
+        quotes = self.session.get_quotes(instruments=list(tickers))
+
+        return quotes
 
     def hist_quote(self) -> List[Dict]:
         pass

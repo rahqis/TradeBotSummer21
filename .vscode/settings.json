@@ -1,6 +1,10 @@
 {
     "python.analysis.diagnosticMode": "workspace",
     "python.analysis.extraPaths": [
-        "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages"
-    ]
+        "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages",
+        "/Users/rahqisarsour/Documents/TradeBotSummer21",
+        "/Users/rahqisarsour/.vscode/extensions/ms-python.vscode-pylance-2021.6.1/dist/typeshed-fallback/stdlib/",
+    ], 
+
+    "python.pythonPath": "/usr/local/bin/python3.9"
 }

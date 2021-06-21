@@ -1,7 +1,11 @@
 # Last Updated: Rahqi Sarsour 8:32 PM 06/08/21
 
-from _typeshed import StrOrBytesPath
+from td.client import TDClient
 from typing import List, Dict, Tuple, Union, Optional
+from typing import TYPE_CHECKING
+
+from os import PathLike
+StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
 
 
 class Portfolio():
@@ -14,6 +18,7 @@ class Portfolio():
         self.profit = 0.0
         self.risk_tolerance = 0.0
         self.acct_num = acct_num
+        self._td_client: TDClient = None
 
     def new_position(self, ticker: str, asset_type: str, purchase_date: Optional[str], quantity: int = 0, price: float = 0.0) -> dict:
 
@@ -66,6 +71,14 @@ class Portfolio():
             return True
 
         return False
+
+    @property  # td_client property getter method
+    def td_client(self) -> TDClient:
+        return self._td_client
+
+    @td_client.setter  # td_client property setter method
+    def td_client(self, td_client: TDClient) -> None:
+        self._td_client: TDClient = td_client
 
     def total_allocation(self):
         pass
