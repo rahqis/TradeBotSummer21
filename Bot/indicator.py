@@ -5,22 +5,23 @@ from typing import Any
 from typing import Dict
 from typing import Union
 
-from pyrobot.stock_frame import StockFrame
+from Bot.stock_frame import StockFrame
+
 
 class Indicators():
 
     """
     Represents an Indicator Object which can be used
     to easily add technical indicators to a StockFrame.
-    """    
-    
+    """
+
     def __init__(self, price_data_frame: StockFrame) -> None:
         """Initalizes the Indicator Client.
         Arguments:
         ----
         price_data_frame {pyrobot.StockFrame} -- The price data frame which is used to add indicators to.
             At a minimum this data frame must have the following columns: `['timestamp','close','open','high','low']`.
-        
+
         Usage:
         ----
             >>> historical_prices_df = trading_robot.grab_historical_prices(
@@ -42,11 +43,11 @@ class Indicators():
 
         self._indicators_comp_key = []
         self._indicators_key = []
-        
+
         if self.is_multi_index:
             True
 
-    def get_indicator_signal(self, indicator: str= None) -> Dict:
+    def get_indicator_signal(self, indicator: str = None) -> Dict:
         """Return the raw Pandas Dataframe Object.
         Arguments:
         ----
@@ -58,31 +59,31 @@ class Indicators():
 
         if indicator and indicator in self._indicator_signals:
             return self._indicator_signals[indicator]
-        else:      
+        else:
             return self._indicator_signals
-    
-    def set_indicator_signal(self, indicator: str, buy: float, sell: float, condition_buy: Any, condition_sell: Any, 
+
+    def set_indicator_signal(self, indicator: str, buy: float, sell: float, condition_buy: Any, condition_sell: Any,
                              buy_max: float = None, sell_max: float = None, condition_buy_max: Any = None, condition_sell_max: Any = None) -> None:
         """Used to set an indicator where one indicator crosses above or below a certain numerical threshold.
         Arguments:
         ----
         indicator {str} -- The indicator key, for example `ema` or `sma`.
         buy {float} -- The buy signal threshold for the indicator.
-        
+
         sell {float} -- The sell signal threshold for the indicator.
         condition_buy {str} -- The operator which is used to evaluate the `buy` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`.
-        
+
         condition_sell {str} -- The operator which is used to evaluate the `sell` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`.
         buy_max {float} -- If the buy threshold has a maximum value that needs to be set, then set the `buy_max` threshold.
             This means if the signal exceeds this amount it WILL NOT PURCHASE THE INSTRUMENT. (defaults to None).
-        
+
         sell_max {float} -- If the sell threshold has a maximum value that needs to be set, then set the `buy_max` threshold.
             This means if the signal exceeds this amount it WILL NOT SELL THE INSTRUMENT. (defaults to None).
         condition_buy_max {str} -- The operator which is used to evaluate the `buy_max` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`. (defaults to None).
-        
+
         condition_sell_max {str} -- The operator which is used to evaluate the `sell_max` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`. (defaults to None).
         """
@@ -90,16 +91,16 @@ class Indicators():
         # Add the key if it doesn't exist.
         if indicator not in self._indicator_signals:
             self._indicator_signals[indicator] = {}
-            self._indicators_key.append(indicator)      
+            self._indicators_key.append(indicator)
 
         # Add the signals.
-        self._indicator_signals[indicator]['buy'] = buy     
+        self._indicator_signals[indicator]['buy'] = buy
         self._indicator_signals[indicator]['sell'] = sell
         self._indicator_signals[indicator]['buy_operator'] = condition_buy
         self._indicator_signals[indicator]['sell_operator'] = condition_sell
 
         # Add the max signals
-        self._indicator_signals[indicator]['buy_max'] = buy_max  
+        self._indicator_signals[indicator]['buy_max'] = buy_max
         self._indicator_signals[indicator]['sell_max'] = sell_max
         self._indicator_signals[indicator]['buy_operator_max'] = condition_buy_max
         self._indicator_signals[indicator]['sell_operator_max'] = condition_sell_max
@@ -119,7 +120,7 @@ class Indicators():
             is the `sma` greater than the `ema`.
         condition_buy {str} -- The operator which is used to evaluate the `buy` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`.
-        
+
         condition_sell {str} -- The operator which is used to evaluate the `sell` condition. For example, `">"` would
             represent greater than or from the `operator` module it would represent `operator.gt`.
         """
@@ -133,7 +134,7 @@ class Indicators():
         # Add the key if it doesn't exist.
         if key not in self._indicator_signals:
             self._indicator_signals[key] = {}
-            self._indicators_comp_key.append(key)   
+            self._indicators_comp_key.append(key)
 
         # Grab the dictionary.
         indicator_dict = self._indicator_signals[key]
