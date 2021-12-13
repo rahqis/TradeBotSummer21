@@ -6,5 +6,7 @@
         "/Users/rahqisarsour/.vscode/extensions/ms-python.vscode-pylance-2021.6.1/dist/typeshed-fallback/stdlib/",
     ], 
 
-    "python.pythonPath": "/usr/local/bin/python3.9"
+    "python.pythonPath": "/usr/local/bin/python3.9",
+    "python.linting.enabled": true,
+    "python.linting.pylintEngabled": true
 }

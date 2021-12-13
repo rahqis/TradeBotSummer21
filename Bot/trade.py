@@ -19,7 +19,7 @@ class Trade():
         self.trigger_added = False
         self._multi_leg = False
 
-    def new_trade(self, id: str, order_type: str, side: str, enter_exit: str, price: float = 0.00, stop_limit: float = 0.00) -> dict:
+    def new_trade(self, id: str, order_type: str, long_or_short: str, enter_exit: str, price: float = 0.00, stop_limit: float = 0.00) -> dict:
 
         self.trade_id = id
 
@@ -73,7 +73,7 @@ class Trade():
             self.order['stopType'] = 'STANDARD'
 
         self.enter_or_exit = enter_exit
-        self.side = side
+        self.side = long_or_short
         self.order_type = order_type
         self.price = price
 

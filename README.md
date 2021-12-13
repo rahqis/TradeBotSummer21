@@ -3,12 +3,15 @@
 ## Requirements
 
 TD Ameritrade Python API
-Pandas
-Numpy
 
-Use building a trade bot video playlist by Sigma Coding on Youtube.
-All should watch the first video. I can finish robot frame (At least video 2, maybe 3)
-Someone Could go ahead and work on other files, just comment on top of page what you are working on. For example, look at robot_frame.py.
+6 python files:
+indicator.py
+portfolio.py
+robot_frame.py
+stock_frame.py
+trade.py
+run_bot.py
 
-Todo:
-Make TD Ameritrade Account (I'll work on this)
+Following SigmaCoding Tutorials for building frames and structure of trades
+
+Currently on Video 14/20 on youtube tutorial
