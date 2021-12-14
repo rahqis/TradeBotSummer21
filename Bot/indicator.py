@@ -165,3 +165,172 @@ class Indicators():
         """
 
         self._frame = price_data_frame
+
+    def rsi(self, period: int, method: str = 'wilders', column_name: str = 'rsi') -> pd.DataFrame:
+        """Calculates the Relative Strength Index (RSI).
+        Arguments:
+        ----
+        period {int} -- The number of periods to use to calculate the RSI.
+        Keyword Arguments:
+        ----
+        method {str} -- The calculation methodology. (default: {'wilders'})
+        Returns:
+        ----
+        {pd.DataFrame} -- A Pandas data frame with the RSI indicator included.
+        Usage:
+        ----
+            >>> historical_prices_df = trading_robot.grab_historical_prices(
+                start=start_date,
+                end=end_date,
+                bar_size=1,
+                bar_type='minute'
+            )
+            >>> price_data_frame = pd.DataFrame(data=historical_prices)
+            >>> indicator_client = Indicators(price_data_frame=price_data_frame)
+            >>> indicator_client.rsi(period=14)
+            >>> price_data_frame = inidcator_client.price_data_frame
+        """
+
+        locals_data = locals()
+        del locals_data['self']
+
+        self._current_indicators[column_name] = {}
+        self._current_indicators[column_name]['args'] = locals_data
+        self._current_indicators[column_name]['func'] = self.rsi
+
+        # First calculate the Change in Price.
+        if 'change_in_price' not in self._frame.columns:
+            self.change_in_price()
+
+        # Define the up days.
+        self._frame['up_day'] = self._price_groups['change_in_price'].transform(
+            lambda x: np.where(x >= 0, x, 0)
+        )
+
+        # Define the down days.
+        self._frame['down_day'] = self._price_groups['change_in_price'].transform(
+            lambda x: np.where(x < 0, x.abs(), 0)
+        )
+
+        # Calculate the EWMA for the Up days.
+        self._frame['ewma_up'] = self._price_groups['up_day'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        # Calculate the EWMA for the Down days.
+        self._frame['ewma_down'] = self._price_groups['down_day'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        # Calculate the Relative Strength
+        relative_strength = self._frame['ewma_up'] / self._frame['ewma_down']
+
+        # Calculate the Relative Strength Index
+        relative_strength_index = 100.0 - (100.0 / (1.0 + relative_strength))
+
+        # Add the info to the data frame.
+        self._frame['rsi'] = np.where(
+            relative_strength_index == 0, 100, 100 - (100 / (1 + relative_strength_index)))
+
+        # Clean up before sending back.
+        self._frame.drop(
+            labels=['ewma_up', 'ewma_down', 'down_day',
+                    'up_day', 'change_in_price'],
+            axis=1,
+            inplace=True
+        )
+
+        return self._frame
+
+    def sma(self, period: int, column_name: str = 'sma') -> pd.DataFrame:
+        # Calculates the Simple Moving Average (SMA).
+        # Arguments:
+        # ----
+        # period {int} -- The number of periods to use when calculating the SMA.
+        # Returns:
+        # ----
+        # {pd.DataFrame} -- A Pandas data frame with the SMA indicator included.
+        # Usage:
+        # ----
+        #     >>> historical_prices_df = trading_robot.grab_historical_prices(
+        #         start=start_date,
+        #         end=end_date,
+        #         bar_size=1,
+        #         bar_type='minute'
+        #     )
+        #     >>> price_data_frame = pd.DataFrame(data=historical_prices)
+        #     >>> indicator_client = Indicators(price_data_frame=price_data_frame)
+        #     >>> indicator_client.sma(period=100)
+
+        locals_data = locals()
+        del locals_data['self']
+
+        self._current_indicators[column_name] = {}
+        self._current_indicators[column_name]['args'] = locals_data
+        self._current_indicators[column_name]['func'] = self.sma
+
+        # Add the SMA
+        self._frame[column_name] = self._price_groups['close'].transform(
+            lambda x: x.rolling(window=period).mean()
+        )
+
+        return self._frame
+
+    def ema(self, period: int, alpha: float = 0.0, column_name='ema') -> pd.DataFrame:
+
+        # Calculates the Exponential Moving Average (EMA).
+        # Arguments:
+        # ----
+        # period {int} -- The number of periods to use when calculating the EMA.
+        # alpha {float} -- The alpha weight used in the calculation. (default: {0.0})
+        # Returns:
+        # ----
+        # {pd.DataFrame} -- A Pandas data frame with the EMA indicator included.
+
+        locals_data = locals()
+        del locals_data['self']
+
+        self._current_indicators[column_name] = {}
+        self._current_indicators[column_name]['args'] = locals_data
+        self._current_indicators[column_name]['func'] = self.ema
+
+        # Add the EMA
+        self._frame[column_name] = self._price_groups['close'].transform(
+            lambda x: x.ewm(span=period).mean()
+        )
+
+        return self._frame
+
+    def refresh(self):
+        """Updates the Indicator columns after adding the new rows."""
+
+        # First update the groups since, we have new rows.
+        self._price_groups = self._stock_frame.symbol_groups
+
+        # Grab all the details of the indicators so far.
+        for indicator in self._current_indicators:
+
+            # Grab the function.
+            indicator_argument = self._current_indicators[indicator]['args']
+
+            # Grab the arguments.
+            indicator_function = self._current_indicators[indicator]['func']
+
+            # Update the function.
+            indicator_function(**indicator_argument)
+
+    def check_signals(self) -> Union[pd.DataFrame, None]:
+        """Checks to see if any signals have been generated.
+        Returns:
+        ----
+        {Union[pd.DataFrame, None]} -- If signals are generated then a pandas.DataFrame
+            is returned otherwise nothing is returned.
+        """
+
+        signals_df = self._stock_frame._check_signals(
+            indicators=self._indicator_signals,
+            indciators_comp_key=self._indicators_comp_key,
+            indicators_key=self._indicators_key
+        )
+
+        return signals_df
