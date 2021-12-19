@@ -322,7 +322,7 @@ class robotFrame():
                         order_response = {
                             'order_id': order_response['order_id'],
                             'request_body': order_response['request_body'],
-                            'timestamp': datetime.now().isoformat()
+                            'timestamp': dt.now().isoformat()
                         }
 
                         order_responses.append(order_response)
@@ -332,7 +332,7 @@ class robotFrame():
                         order_response = {
                             'order_id': trade_obj._generate_order_id(),
                             'request_body': trade_obj.order,
-                            'timestamp': datetime.now().isoformat()
+                            'timestamp': dt.now().isoformat()
                         }
 
                         order_responses.append(order_response)
@@ -369,7 +369,7 @@ class robotFrame():
                         order_response = {
                             'order_id': order_response['order_id'],
                             'request_body': order_response['request_body'],
-                            'timestamp': datetime.now().isoformat()
+                            'timestamp': dt.now().isoformat()
                         }
 
                         order_responses.append(order_response)
@@ -379,7 +379,7 @@ class robotFrame():
                         order_response = {
                             'order_id': trade_obj._generate_order_id(),
                             'request_body': trade_obj.order,
-                            'timestamp': datetime.now().isoformat()
+                            'timestamp': dt.now().isoformat()
                         }
 
                         order_responses.append(order_response)

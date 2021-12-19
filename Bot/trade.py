@@ -99,6 +99,33 @@ class Trade():
 
         return self.order
 
+    def instrument(self, symbol: str, quantity: int, asset_type: str, sub_asset_type: str = None, order_leg_id: int = 0) -> dict:
+        """Adds an instrument to a trade.
+        Arguments:
+        ----
+        symbol {str} -- The instrument ticker symbol.
+        quantity {int} -- The quantity of shares to be purchased.
+        asset_type {str} -- The instrument asset type. For example, `EQUITY`.
+        Keyword Arguments:
+        ----
+        sub_asset_type {str} -- The instrument sub-asset type, not always needed. For example, `ETF`. (default: {None})
+        Returns:
+        ----
+        {dict} -- A dictionary with the instrument.
+        """
+
+        leg = self.order['orderLegCollection'][order_leg_id]
+
+        leg['instrument']['symbol'] = symbol
+        leg['instrument']['assetType'] = asset_type
+        leg['quantity'] = quantity
+
+        self.order_size = quantity
+        self.symbol = symbol
+        self.asset_type = asset_type
+
+        return leg
+
     def get_instrument(self, ticker: str, quantity: int, asset_type: str, sub_asset_type: str = None, order_leg_id: int = 0) -> dict:
 
         leg = self.order['orderLegCollection']['orderLegId']
@@ -136,3 +163,16 @@ class Trade():
 
         if not stop_limit:
             self.add_stop_loss(stop_size=profit_size, percentage=percentage)
+
+    def to_dict(self) -> dict:
+
+        # Initialize the Dict.
+        obj_dict = {
+            "__class___": self.__class__.__name__,
+            "__module___": self.__module__
+        }
+
+        # Add the Object.
+        obj_dict.update(self.__dict__)
+
+        return
